@@ -1,0 +1,26 @@
+|
+| 
+if policy.Effect == "Allow"
+    |whitelist {
+else 
+    |blacklist {
+
+| 
+| 
+|  #Validate-Action
+|  some i
+|  actions := ["#{policy.Action.join('\",\"')}"]
+|  actions[i] == input.action
+
+|
+|
+|  #Validate Resource
+|  some j
+|  resources := ["#{policy.Resource.join('\",\"').replace(/\*/g,"([a-z0-9A-Z_]+)")}"]
+|  regex.match(resources[j], input.topic)
+|
+
+unless policy.Condition == undefined    
+    include _conditions.pug
+| 
+| }

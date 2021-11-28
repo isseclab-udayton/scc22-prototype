@@ -1,0 +1,18 @@
+        
+|
+|  #Validate Condition AnyOf
+| 
+
+
+- var variables_list = []
+each sub_condition , idx in condition   
+    - var variable_text = ["var_any","c",idx].join("_")
+    - variables_list.push(variable_text)    
+    include declare_variable.pug
+    
+
+
+| 
+|  conditions_anyof := [ #{variables_list.join(",")}]
+|  some k
+|  conditions_anyof[k] == true

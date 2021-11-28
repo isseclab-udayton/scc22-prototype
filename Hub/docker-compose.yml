@@ -1,0 +1,110 @@
+version: "3.5"
+services:
+
+  streaming-service:
+    build:
+      context: ./Streaming-Service    
+    expose:
+      - "1935"
+      - "8088"
+    ports:
+      - "1935:1935"
+      - "8088:8088"
+    networks:
+      - default
+
+  streaming-auth:
+    build:
+      context: ./Streaming-Auth   
+    environment:
+      OPA_HOST: "http://opa:8181"
+      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
+    networks:
+      - default
+
+  virtual-mqtt:
+    build:
+      context: ./VirtualMQTT
+    depends_on:
+      - opa_tenant-1
+      - opa_tenant-2
+      - opa_context_sensing
+    environment:
+      OPA_HOST: "http://opa:8181"
+      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
+      
+    expose:
+      - "1883"
+      - "8888"
+    ports:
+      - "1883:1883"
+      - "8888:8888"
+    networks:
+      - default
+
+  context-sensing:
+    build:
+      context: ./ContextSensing
+    depends_on:
+      - virtual-mqtt      
+    environment:
+      MQTT_HOST: "mqtt://virtual-mqtt:1883"      
+      BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
+      API: ${AUTHENTICATION_HOST}
+
+    networks:
+      - default
+
+  policy_synchronizer:
+    build:
+      context: ./Policy-Synchronizer
+    environment:
+      MQTT_HOST: "mqtt://virtual-mqtt:1883"      
+      BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
+    networks:
+      - default
+
+  opa_context_sensing:
+    build:
+      context: ./OPA
+    ports:
+      - "8181:8181"
+    
+    networks:
+      - default
+
+  opa_mqtt_system:
+    build:
+      context: ./OPA
+    
+    networks:
+      - default
+
+  opa_tenant-1:
+    build:
+      context: ./OPA
+    
+    networks:
+      - default
+ 
+  opa_tenant-2:
+    build:
+      context: ./OPA
+    
+
+    networks:
+      - default
+
+  opa_tenant-3:
+    build:
+      context: ./OPA
+    
+    networks:
+      - default
+
+  opa_tenant-4:
+    build:
+      context: ./OPA
+    
+    networks:
+      - default

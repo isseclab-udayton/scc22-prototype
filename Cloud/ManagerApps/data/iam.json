@@ -1,0 +1,62 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:SendMessage"
+            ],
+            "Resource": "arn:aws:sqs:*:811770454613:*",
+            "Condition": {
+                "ForAllValues:StringEquals": {
+                    "aws:username": "xxx",
+                    "aws:userid": [
+                        "Yes",
+                        "No",
+                        "HAHA"
+                    ]
+                },
+                "ForAllValues:StringNotEquals": {
+                    "aws:username": "Hello"
+                },
+                "ForAnyValue:DateNotEquals": {
+                    "aws:EpochTime": "1234"
+                },
+                "IpAddress": {
+                    "aws:SourceIp": "210.75.12.75/16"
+                },
+                "ForAllValues:StringEqualsIfExists": {
+                    "aws:username": "Bye"
+                }
+            }
+        }
+    ]
+}
+
+//ForAllValues
+//ForAnyValue
+
+StringEquals
+StringNotEquals
+StringEqualsIgnoreCase
+StringNotEqualsIgnoreCase
+StringLike
+StringNotLike
+Null
+DateEquals
+DateNotEquals
+DateLessThan
+DateLessThanEquals
+DateGreaterThan
+DateGreaterThanEquals
+
+NumericEquals
+NumericNotEquals
+NumericLessThan
+NumericLessThanEquals
+NumericGreaterThan
+NumericGreaterThanEquals
+
+

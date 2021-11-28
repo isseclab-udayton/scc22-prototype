@@ -1,0 +1,16 @@
+{
+    "people_count":{
+        "stubpark" : {
+            "topic": "/smartcity/camera/people_count/usa/ohio/stubpark/city_ai"
+            
+        }
+    },
+    "data_amount":{
+        "mqtt":
+        {
+            "topic":"/hub/data_amount/mqtt/#"
+        }
+    }
+    
+}
+

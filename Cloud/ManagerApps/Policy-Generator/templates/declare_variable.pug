@@ -1,0 +1,44 @@
+- var operators = {"gt": ">","gte":">=", "lt":"<", "lte":"<=", "eq":"==","ne":"!="}
+
+mixin declare_variable_people_count(variable_text, sub_condition)
+    - var metrics = ["max_5mins","min_5mins","avg_5mins","max_15mins","min_15mins","avg_15mins"]
+    - var metric = ""
+    - var operator =""
+    each att_val , att in sub_condition 
+        if metric == "" && metrics.includes(att)
+            - metric = att
+    each val, operator_idx in sub_condition[metric]
+        if operator == ""
+            - operator = operator_idx
+
+    
+    | #{variable_text} := data["context_data"]["people_count"]["#{sub_condition["location"]}"]["#{metric}"]  !{operators[operator]} #{sub_condition[metric][operator]}
+
+mixin declare_variable_data_amount(variable_text, sub_condition)
+    - var metrics = ["lasthour_mb", "last24hour_mb"]
+    - var metric = ""
+    - var operator =""
+    each att_val , att in sub_condition 
+        if metric == "" && metrics.includes(att)
+            - metric = att
+    each val, operator_idx in sub_condition[metric]
+        if operator == ""
+            - operator = operator_idx
+
+    
+    |  #{variable_text} := data["context_data"]["data_amount"]["#{sub_condition["protocol"].toLowerCase()}"]["#{metric}"]  !{operators[operator]} #{sub_condition[metric][operator]}
+     
+
+
+
+mixin declare_variable(variable_text, sub_condition)
+    | 
+    | 
+    if sub_condition['object'].toLowerCase() == "people_count"
+        + declare_variable_people_count(variable_text, sub_condition)
+        
+    else if sub_condition['object'].toLowerCase() == "data_amount"
+        + declare_variable_data_amount(variable_text, sub_condition)
+
+
++ declare_variable(variable_text, sub_condition)

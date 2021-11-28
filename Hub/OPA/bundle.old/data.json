@@ -1,0 +1,26 @@
+{
+    "tenant1": {
+        "publish": [
+            "/environment/air/([a-z]+)/([a-z]+)/oh/universityofdayton/tenant1"
+        ],
+        "subscribe": []
+    },
+    "tenant2": {
+        "publish": [
+            "/environment/([a-z]+)/([a-z]+)/usa/oh/([a-z]+)/tenant2"
+        ],
+        "subscribe": []
+    },
+    "tenant3": {
+        "publish": [],
+        "subscribe": [
+            "/environment/air/([a-z]+)/([a-z]+)/oh/([a-z]+)/([a-z]+)"
+        ]
+    },
+    "tenant4": {
+        "publish": [],
+        "subscribe": [
+            "/environment/([a-z]+)/([a-z]+)/([a-z]+)/oh/([a-z]+)/tenant2"
+        ]
+    }
+}

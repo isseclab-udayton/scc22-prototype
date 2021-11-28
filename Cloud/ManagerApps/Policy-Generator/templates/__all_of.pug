@@ -1,0 +1,22 @@
+|
+
+|
+|
+|  #Validate Condition AllOf
+|
+
+
+- var idx = 0 
+- var variables_list = []
+each sub_condition , idx in condition   
+    - var variable_text = ["var_all","c",idx].join("_")
+    - variables_list.push(variable_text)
+    include declare_variable.pug
+
+
+| 
+|  conditions_allof := [ #{variables_list.join(",")}]
+
+|  conditions_allof_negative := {value | value = conditions_allof[_]; value == false}
+
+|  count(conditions_allof_negative) == 0

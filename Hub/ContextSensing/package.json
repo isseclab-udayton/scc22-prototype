@@ -1,0 +1,21 @@
+{
+  "name": "emergencymonitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aedes": "^0.45.0",
+    "dataframe-js": "^1.4.4",
+    "kafkajs": "^1.15.0",
+    "mqtt": "^4.2.6",
+    "node-fetch": "^2.6.1",
+    "redis": "^3.1.0",
+    "url-join": "^4.0.1"
+  }
+}

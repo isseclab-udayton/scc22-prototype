@@ -1,0 +1,6 @@
+[submodule "IoT-Kafka/kafka-mqtt-sink-connector"]
+	path = IoT-Kafka/kafka-mqtt-sink-connector
+	url = https://github.com/SINTEF-9012/kafka-mqtt-sink-connector.git
+[submodule "IoT-Kafka/kafka-mqtt-source-connector"]
+	path = IoT-Kafka/kafka-mqtt-source-connector
+	url = https://github.com/SINTEF-9012/kafka-mqtt-source-connector.git
