@@ -254,6 +254,7 @@ httpServer.listen(http_port, function () {
 setInterval(() => {
   
   const clients = Object.keys(client_lists);
+  console.log(clients)
   console.log("Refreshing permission for "+ clients.length)
   for(const client in clients){
 
