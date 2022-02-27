@@ -180,7 +180,7 @@ aedes.authorizePublish = function (client, packet, callback) {
   const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
 
   console.log("Cheking permission: ",client_username, packet_topic)  
-  console.log(permission_dict)
+
   
 
   if(permission_dict[client_username]['authorize_publish'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][packet_topic] < PERMISSION_CACHE_TIME ){
@@ -189,7 +189,7 @@ aedes.authorizePublish = function (client, packet, callback) {
   }else{
 
     
-    console.log("Cheking permission: ", packet_topic, ">> OPA")
+    
 
     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
       .then(res => res.json()) // expecting a json response
@@ -338,7 +338,7 @@ setInterval(() => {
         .then(res => res.json()) // expecting a json response
         .then(json => {
 
-          console.log(json)
+          
           
           if (json['result']['allow']){
             data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
