@@ -49,8 +49,10 @@ var mqtt_client = mqtt.connect('mqtt://localhost',{
 })
 
 
-let client_lists = []
 
+let permission_dict = {
+  
+}
 let ts = Date.now();
 
 //DONE
@@ -87,7 +89,11 @@ aedes.authenticate = function (client, username, password, callback) {
         console.log("User %s is authenticated",username)      
 
         data_amount[username] = 0 
-        client_lists.push(client);
+        
+
+        permission_dict[client.username] = {
+          
+        }
 
         //Append to the client_lists        
         callback(null,true)
@@ -117,8 +123,8 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
   const topic=sub.topic.replace("#","99999999999999999999999999999999999")
 
   //Initialize the authorize_subscribe dictionary
-  if (   client.authorize_subscribe == undefined){
-    client.authorize_subscribe = {
+  if ( permission_dict[client.username]['authorize_subscribe'] == undefined){
+    permission_dict[client.username]['authorize_subscribe'] = {
 
     }
   }
@@ -142,7 +148,7 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
     .then(json => {
       if (json['result']['allow']){
         
-        client.authorize_subscribe[sub.topic] =ts
+        permission_dict[client.username]['authorize_subscribe'][sub.topic] =ts
         callback(null, sub)
         
       }else{
@@ -159,8 +165,8 @@ aedes.authorizePublish = function (client, packet, callback) {
 
 
   //Initialize the dictionary
-  if (client.authorize_publish == undefined){
-    client.authorize_publish = {
+  if (permission_dict[client.username]['authorize_publish'] == undefined){
+    permission_dict[client.username]['authorize_publish'] = {
 
     }
 
@@ -176,11 +182,12 @@ aedes.authorizePublish = function (client, packet, callback) {
         
     }
   }
-  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)   
+
+  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
 
   console.log("Cheking permission: ", packet.topic)
   
-  if(client.authorize_publish[packet.topic] != undefined && ts - client.authorize_publish[packet.topic] < PERMISSION_CACHE_TIME ){
+  if(permission_dict[client.username]['authorize_publish'][packet.topic] != undefined && ts - permission_dict[client.username]['authorize_publish'][packet.topic] < PERMISSION_CACHE_TIME ){
     console.log("Cheking permission: ", packet.topic, ">> Cached")
     callback(null)
   }else{
@@ -195,7 +202,7 @@ aedes.authorizePublish = function (client, packet, callback) {
 
           data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
 
-          client.authorize_publish[packet.topic] = ts
+          permission_dict[client.username]['authorize_publish'][packet.topic] = ts
 
 
           console.log("Cheking permission: ", packet.topic, ">> OPA DONE")
@@ -203,7 +210,7 @@ aedes.authorizePublish = function (client, packet, callback) {
           callback(null)
           
         }else{
-          client.authorize_publish[packet.topic] = 0
+          permission_dict[client.username]['authorize_publish'][packet.topic] = 0
 
           callback(new Error('Unauthorized'))
         }
@@ -237,7 +244,7 @@ aedes.authorizeForward = function (client, packet) {
   //If the permission is not expired, refresh permission in background, and check for the permission
  
 
-  if(client.authorize_subscribe[packet.topic] != undefined && ts - client.authorize_subscribe[packet.topic] < PERMISSION_CACHE_TIME ){    
+  if(permission_dict[client.username]['authorize_subscribe'][packet.topic] != undefined && ts - permission_dict[client.username]['authorize_subscribe'][packet.topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
     return packet
 
@@ -266,27 +273,31 @@ httpServer.listen(http_port, function () {
 
 setInterval(() => {
   
+
+  permission_dict[client.username]['authorize_subscribe']
+
+  const client_lists = Object.keys(permission_dict)
   
   
   console.log("Refreshing permission for "+ client_lists.length)
-  for(const client in client_lists){
-    if(client.username == undefined){
+  for(const client_name in client_lists){
+    if(client_name == undefined){
       continue
     }
 
-    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)
 
-    console.log(OPA_TENANT_URL)
+    
     
 
-    if(client.authorize_publish != undefined){
-      const client_published_topics = Object.keys(client.authorize_publish);
+    if(permission_dict[client_name]['authorize_publish'] != undefined){
+      const client_published_topics = Object.keys(permission_dict[client_name]['authorize_publish']);
       //Refresh Publish
       for(const client_published_topic in client_published_topics){
         const opa_body = {
           "input":{
             "action": "publish",
-            "tenant_id": client.username,
+            "tenant_id": client_name,
             "topic": client_published_topic
               
           }
@@ -297,12 +308,12 @@ setInterval(() => {
         .then(json => {
           
           if (json['result']['allow']){
-            data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
+            data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
 
-            client.authorize_publish[packet.topic] = ts
+            permission_dict[client_name]['authorize_publish'][packet.topic] = ts
             
           }else{
-            client.authorize_publish[packet.topic] = 0
+            permission_dict[client_name]['authorize_publish'][packet.topic] = 0
           }
         });    
       }
@@ -310,13 +321,13 @@ setInterval(() => {
 
 
     //Refresh Subscribe
-    if(client.authorize_subscribe!=undefined){
-      const client_subscribed_topics = Object.keys(client.authorize_subscribe);
+    if(permission_dict[client_name]['authorize_subscribe']!=undefined){
+      const client_subscribed_topics = Object.keys(permission_dict[client_name]['authorize_subscribe']);
       for(const client_subscribied_topic in client_subscribed_topics){
         const opa_body = {
           "input":{
             "action": "subscribe",
-            "tenant_id": client.username,
+            "tenant_id": client_name,
             "topic": client_subscribied_topic
               
           }
@@ -329,11 +340,11 @@ setInterval(() => {
           console.log(json)
           
           if (json['result']['allow']){
-            data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
-            client.authorize_subscribe[packet.topic] = ts
+            data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
+            permission_dict[client_name]['authorize_subscribe'][packet.topic] = ts
             
           }else{
-            client.authorize_subscribe[packet.topic] = 0
+            permission_dict[client_name]['authorize_subscribe'][packet.topic] = 0
           }
         });    
       }
