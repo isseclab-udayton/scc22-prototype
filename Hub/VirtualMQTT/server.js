@@ -213,7 +213,7 @@ aedes.authorizePublish = function (client, packet, callback) {
 
           permission_dict[client_username]['authorize_publish'][packet_topic] = ts
           
-          console.log(permission_dict[client_username])
+          console.log(permission_dict)
           
           console.log("Cheking permission: ", packet_topic, ">> OPA DONE")
 
