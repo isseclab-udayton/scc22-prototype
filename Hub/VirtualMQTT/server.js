@@ -224,7 +224,7 @@ aedes.authorizeForward = function (client, packet) {
   //If the permission is not expired, refresh permission in background, and check for the permission
  
 
-  if(client.authorize_publish[packet.topic] != undefined && ts - client.authorize_publish[packet.topic] < PERMISSION_CACHE_TIME ){    
+  if(client.authorize_subscribe[packet.topic] != undefined && ts - client.authorize_subscribe[packet.topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
     return packet
 
