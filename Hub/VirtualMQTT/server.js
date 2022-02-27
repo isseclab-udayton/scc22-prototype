@@ -90,15 +90,17 @@ aedes.authenticate = function (client, username, password, callback) {
 
         data_amount[username] = 0 
         
+        if (permission_dict[client.username] == undefined){
 
-        permission_dict[client.username] = {
-          'authorize_publish': {
+          permission_dict[client.username] = {
+            'authorize_publish': {
 
-          },         
-          'authorize_subscribe': {
+            },         
+            'authorize_subscribe': {
+              
+            }
             
           }
-          
         }
 
         //Append to the client_lists        
