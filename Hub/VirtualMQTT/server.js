@@ -361,9 +361,9 @@ setInterval(() => {
 
 //Refresh the share ts 
 setInterval(() => {
-
+  console.log("Refresh ts",ts)
   ts = Date.now();
-  console.log("Refresh ts")
+  
   
 }, 500);
 
