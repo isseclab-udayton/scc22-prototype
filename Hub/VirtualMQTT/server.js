@@ -340,7 +340,6 @@ setInterval(() => {
           
           
           if (json['result']['allow']){
-            data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
             permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = ts
             
           }else{
