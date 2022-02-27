@@ -280,7 +280,7 @@ setInterval(() => {
   
   console.log("Refreshing permission for "+ client_lists.length)
   for(const client_name in client_lists){
-    if(client_name == undefined){
+    if(permission_dict[client_name] == undefined){
       continue
     }
 
