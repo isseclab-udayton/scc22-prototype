@@ -170,26 +170,22 @@ aedes.authorizePublish = function (client, packet, callback) {
   const topic=packet_topic.replace("#","99999999999999999999999999999999999")
 
   
-  const opa_body = {
-    "input":{
-      "action": "publish",
-      "tenant_id": client_username,
-      "topic": topic
-        
-    }
-  }
-
-  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
-
-
-
   console.log("Check permission Publish:", client_username, packet_topic)
   
 
-  if(permission_dict[client_username]['authorize_publish'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][packet_topic] < PERMISSION_CACHE_TIME ){
-    
+  if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
     callback(null)
   }else{   
+
+    const opa_body = {
+      "input":{
+        "action": "publish",
+        "tenant_id": client_username,
+        "topic": topic
+          
+      }
+    }  
+    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
     
 
     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
@@ -232,14 +228,12 @@ aedes.authorizeForward = function (client, packet) {
  
     
 
-  if(permission_dict[client_username]['authorize_subscribe'][topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
+  if(ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
 
   }else{
-
-
-    
+   
     return
   }
 
