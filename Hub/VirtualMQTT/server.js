@@ -160,6 +160,8 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
 
 //DONE
 aedes.authorizePublish = function (client, packet, callback) {
+  
+  topic=topic.replace("#","99999999999999999999999999999999999")
 
   
 
@@ -178,7 +180,7 @@ aedes.authorizePublish = function (client, packet, callback) {
     "input":{
       "action": "publish",
       "tenant_id": client.username,
-      "topic": packet.topic
+      "topic": topic
         
     }
   }
@@ -199,6 +201,8 @@ aedes.authorizePublish = function (client, packet, callback) {
     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
       .then(res => res.json()) // expecting a json response
       .then(json => {
+
+        console
         
         if (json['result']['allow']){
 
@@ -228,8 +232,8 @@ aedes.authorizeForward = function (client, packet) {
 
   //Assumption: A client must subscribe to the topic to be able to go into this function
 
-  topic=topic.replace("#","99999999999999999999999999999999999")
-  opa_body = {
+  const topic=topic.replace("#","99999999999999999999999999999999999")
+  const opa_body = {
         "input":{
           "action": "subscribe",
           "tenant_id": client.username,
@@ -237,7 +241,7 @@ aedes.authorizeForward = function (client, packet) {
           
       }    
   }
-  OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
 
   
 
@@ -361,7 +365,7 @@ setInterval(() => {
   for (const [tenant_id, value] of Object.entries(data_amount)) {
     
 
-    topic = `${DATA_AMOUNT_TOPIC}/${tenant_id}`
+    const topic = `${DATA_AMOUNT_TOPIC}/${tenant_id}`
     
     
     mqtt_client.publish(topic, `${data_amount[tenant_id]}`)
