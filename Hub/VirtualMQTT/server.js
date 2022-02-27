@@ -227,9 +227,7 @@ aedes.authorizeForward = function (client, packet) {
   //If the permission expired, force to await requesting permission
   //If the permission is not expired, refresh permission in background, and check for the permission
  
-  console.log("Checking Forward permission for ",client_username, packet_topic)
-
-  
+    
 
   if(permission_dict[client_username]['authorize_subscribe'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][packet_topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
@@ -298,10 +296,10 @@ setInterval(() => {
           if (json['result']['allow']){
             data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
 
-            permission_dict[client_name]['authorize_publish'][packet.topic] = ts
+            permission_dict[client_name]['authorize_publish'][client_published_topic] = ts
             
           }else{
-            permission_dict[client_name]['authorize_publish'][packet.topic] = 0
+            permission_dict[client_name]['authorize_publish'][client_published_topic] = 0
           }
         });    
       }
@@ -323,16 +321,14 @@ setInterval(() => {
 
         fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
         .then(res => res.json()) // expecting a json response
-        .then(json => {
-
-          
+        .then(json => {          
           
           if (json['result']['allow']){
             data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
-            permission_dict[client_name]['authorize_subscribe'][packet.topic] = ts
+            permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = ts
             
           }else{
-            permission_dict[client_name]['authorize_subscribe'][packet.topic] = 0
+            permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = 0
           }
         });    
       }
