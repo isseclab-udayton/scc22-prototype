@@ -161,7 +161,7 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
 //DONE
 aedes.authorizePublish = function (client, packet, callback) {
   
-  topic=topic.replace("#","99999999999999999999999999999999999")
+  topic=packet.topic.replace("#","99999999999999999999999999999999999")
 
   
 
