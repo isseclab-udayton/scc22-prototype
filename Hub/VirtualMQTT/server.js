@@ -86,9 +86,12 @@ aedes.authenticate = function (client, username, password, callback) {
 
         data_amount[username] = 0 
         client_lists[client] = 1
+        //Append to the client_lists
+
+        console.log(client_lists)
         callback(null,true)
 
-        //Append to the client_lists
+        
         
 
 
@@ -339,7 +342,7 @@ setInterval(() => {
 
     topic = `${DATA_AMOUNT_TOPIC}/${tenant_id}`
     
-    console.log(topic)
+    
     mqtt_client.publish(topic, `${data_amount[tenant_id]}`)
     data_amount[tenant_id] = 0
 
