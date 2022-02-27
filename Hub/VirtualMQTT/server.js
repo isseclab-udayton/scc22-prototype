@@ -229,13 +229,15 @@ aedes.authorizeForward = function (client, packet) {
  
   console.log("Checking Forward permission for ",client_username, packet_topic)
 
-  console.log(permission_dict)
+  
 
   if(permission_dict[client_username]['authorize_subscribe'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][packet_topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
 
   }else{
+
+    console.log("Checking Forward permission for ",client_username, packet_topic,"DENY")
     
     return
   }
