@@ -51,6 +51,8 @@ var mqtt_client = mqtt.connect('mqtt://localhost',{
 
 let client_lists = []
 
+let ts = Date.now();
+
 //DONE
 
      
@@ -139,7 +141,7 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
     .then(res => res.json()) // expecting a json response
     .then(json => {
       if (json['result']['allow']){
-        const ts = Date.now();
+        
         client.authorize_subscribe[sub.topic] =ts
         callback(null, sub)
         
@@ -165,7 +167,7 @@ aedes.authorizePublish = function (client, packet, callback) {
     
   }
 
-  const ts = Date.now();
+  
   const opa_body = {
     "input":{
       "action": "publish",
@@ -222,7 +224,7 @@ aedes.authorizeForward = function (client, packet) {
   }
   OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
 
-  const ts = Date.now();
+  
 
   //Assumption: There is a timer to set the permission
   //If the permission expired, force to await requesting permission
@@ -352,3 +354,14 @@ setInterval(() => {
   }
   
 }, 6000);
+
+
+
+//Refresh the share ts 
+setInterval(() => {
+
+  ts = Date.now();
+  
+}, 500);
+
+
