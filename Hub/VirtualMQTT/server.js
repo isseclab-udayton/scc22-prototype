@@ -175,6 +175,8 @@ aedes.authorizePublish = function (client, packet, callback) {
     }
   }
   const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)   
+
+  console.log("Cheking permission: ", packet.topic)
   
   if(client.authorize_publish[packet.topic] != undefined && ts - client.authorize_publish[packet.topic] < PERMISSION_CACHE_TIME ){
     callback(null)
