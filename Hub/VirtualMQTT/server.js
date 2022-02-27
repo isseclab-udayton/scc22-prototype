@@ -196,13 +196,14 @@ aedes.authorizePublish = function (client, packet, callback) {
     callback(null)
   }else{
 
+    
     console.log("Cheking permission: ", packet.topic, ">> OPA")
 
     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
       .then(res => res.json()) // expecting a json response
       .then(json => {
 
-        console
+        console.log(json)
         
         if (json['result']['allow']){
 
@@ -210,7 +211,7 @@ aedes.authorizePublish = function (client, packet, callback) {
 
           permission_dict[client.username]['authorize_publish'][packet.topic] = ts
 
-
+          
           console.log("Cheking permission: ", packet.topic, ">> OPA DONE")
 
           callback(null)
