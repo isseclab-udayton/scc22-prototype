@@ -321,7 +321,10 @@ setInterval(() => {
 
         fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
         .then(res => res.json()) // expecting a json response
-        .then(json => {          
+        .then(json => {      
+          
+          
+          console.log(json)
           
           if (json['result']['allow']){
             data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
@@ -336,8 +339,6 @@ setInterval(() => {
 
 }
 },PERMISSION_CACHE_REFRESH_TIME);
-
-
 
 setInterval(() => {
 
@@ -362,6 +363,7 @@ setInterval(() => {
 setInterval(() => {
 
   ts = Date.now();
+  console.log("Refresh ts")
   
 }, 500);
 
