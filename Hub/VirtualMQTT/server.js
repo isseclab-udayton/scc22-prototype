@@ -82,13 +82,14 @@ aedes.authenticate = function (client, username, password, callback) {
     .then(json => {
       
       if (json['status']){
-        console.log("User %s is authenticated",username)
+        console.log("User %s is authenticated",username)      
 
         data_amount[username] = 0 
+        client_lists[client] = 1
         callback(null,true)
 
         //Append to the client_lists
-        client_lists[client] = 1
+        
 
 
       }else{
