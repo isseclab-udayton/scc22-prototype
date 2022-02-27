@@ -170,7 +170,7 @@ aedes.authorizePublish = function (client, packet, callback) {
   const topic=packet_topic.replace("#","99999999999999999999999999999999999")
 
   
-  console.log("Check permission Publish:", client_username, packet_topic)
+  
   
 
   if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
