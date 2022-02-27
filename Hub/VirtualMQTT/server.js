@@ -235,6 +235,7 @@ aedes.authorizeForward = function (client, packet) {
 
   }else{
 
+    console.log(permission_dict[client_username])
     console.log("Checking Forward permission for ",client_username, packet_topic,"DENY")
     
     return
