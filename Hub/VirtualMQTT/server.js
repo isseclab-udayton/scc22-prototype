@@ -185,7 +185,7 @@ aedes.authorizePublish = function (client, packet, callback) {
   
 
   if(permission_dict[client_username]['authorize_publish'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][packet_topic] < PERMISSION_CACHE_TIME ){
-    console.log("Cheking permission: ", packet_topic, ">> Cached")
+    
     callback(null)
   }else{   
     
@@ -236,11 +236,7 @@ aedes.authorizeForward = function (client, packet) {
 
   }else{
 
-    console.log("authorizeForward",client_username, topic,"DENY" )
 
-    console.log(permission_dict[client_username])
-    
-    
     
     return
   }
