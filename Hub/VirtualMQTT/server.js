@@ -92,6 +92,12 @@ aedes.authenticate = function (client, username, password, callback) {
         
 
         permission_dict[client.username] = {
+          'authorize_publish': {
+
+          },         
+          'authorize_subscribe': {
+            
+          }
           
         }
 
@@ -122,12 +128,6 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
   
   const topic=sub.topic.replace("#","99999999999999999999999999999999999")
 
-  //Initialize the authorize_subscribe dictionary
-  if ( permission_dict[client.username]['authorize_subscribe'] == undefined){
-    permission_dict[client.username]['authorize_subscribe'] = {
-
-    }
-  }
 
   //Assumption: if a topic in this list has not been initialized, the client has not subscribed for it. 
   //Request for permission
@@ -164,18 +164,6 @@ aedes.authorizePublish = function (client, packet, callback) {
   const packet_topic = packet.topic
   const client_username = client.username
   const topic=packet_topic.replace("#","99999999999999999999999999999999999")
-
-  
-
-
-  //Initialize the dictionary
-  if (permission_dict[client_username]['authorize_publish'] == undefined){
-    permission_dict[client_username]['authorize_publish'] = {
-
-    }
-
-    
-  }
 
   
   const opa_body = {
