@@ -257,67 +257,73 @@ setInterval(() => {
   console.log(clients)
   console.log("Refreshing permission for "+ clients.length)
   for(const client in clients){
+    if(client.username == undefined){
+      continue
+    }
 
     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
 
     console.log(OPA_TENANT_URL)
     
 
-    const client_subscribed_topics = Object.keys(client.authorize_subscribe);
-    const client_published_topics = Object.keys(client.authorize_publish);
-    //Refresh Publish
-    for(const client_published_topic in client_published_topics){
-      const opa_body = {
-        "input":{
-          "action": "publish",
-          "tenant_id": client.username,
-          "topic": client_published_topic
-            
+    if(client.authorize_publish != undefined){
+      const client_published_topics = Object.keys(client.authorize_publish);
+      //Refresh Publish
+      for(const client_published_topic in client_published_topics){
+        const opa_body = {
+          "input":{
+            "action": "publish",
+            "tenant_id": client.username,
+            "topic": client_published_topic
+              
+          }
         }
-      }
 
-      fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-      .then(res => res.json()) // expecting a json response
-      .then(json => {
-        
-        if (json['result']['allow']){
-          data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
-
-          client.authorize_publish[packet.topic] = ts
+        fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+        .then(res => res.json()) // expecting a json response
+        .then(json => {
           
-        }else{
-          client.authorize_publish[packet.topic] = 0
-        }
-      });    
+          if (json['result']['allow']){
+            data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
+
+            client.authorize_publish[packet.topic] = ts
+            
+          }else{
+            client.authorize_publish[packet.topic] = 0
+          }
+        });    
+      }
     }
 
 
     //Refresh Subscribe
-
-    for(const client_subscribied_topic in client_subscribed_topics){
-      const opa_body = {
-        "input":{
-          "action": "subscribe",
-          "tenant_id": client.username,
-          "topic": client_subscribied_topic
-            
+    if(client.authorize_subscribe!=undefined){
+      const client_subscribed_topics = Object.keys(client.authorize_subscribe);
+      for(const client_subscribied_topic in client_subscribed_topics){
+        const opa_body = {
+          "input":{
+            "action": "subscribe",
+            "tenant_id": client.username,
+            "topic": client_subscribied_topic
+              
+          }
         }
-      }
 
-      fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-      .then(res => res.json()) // expecting a json response
-      .then(json => {
+        fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+        .then(res => res.json()) // expecting a json response
+        .then(json => {
 
-        console.log(json)
-        
-        if (json['result']['allow']){
-          data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
-          client.authorize_subscribe[packet.topic] = ts
+          console.log(json)
           
-        }else{
-          client.authorize_subscribe[packet.topic] = 0
-        }
-      });    
+          if (json['result']['allow']){
+            data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
+            client.authorize_subscribe[packet.topic] = ts
+            
+          }else{
+            client.authorize_subscribe[packet.topic] = 0
+          }
+        });    
+      }
     }
 
 }
