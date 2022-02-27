@@ -23,7 +23,7 @@ ws.createServer({ server: httpServer }, aedes.handle)
 
 
 //Configure MQTT
-const server = createServer(aedes)
+const server = createServer(aedes,{concurrency :1000})
 
 
 
