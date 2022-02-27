@@ -49,7 +49,7 @@ var mqtt_client = mqtt.connect('mqtt://localhost',{
 })
 
 
-let client_lists = {};
+let client_lists = []
 
 //DONE
 
@@ -85,7 +85,8 @@ aedes.authenticate = function (client, username, password, callback) {
         console.log("User %s is authenticated",username)      
 
         data_amount[username] = 0 
-        client_lists[client] = 1
+        client_lists.push(client);
+
         //Append to the client_lists
 
         console.log(client_lists)
@@ -257,10 +258,10 @@ httpServer.listen(http_port, function () {
 
 setInterval(() => {
   
-  const clients = Object.keys(client_lists);
+  
   console.log(clients)
-  console.log("Refreshing permission for "+ clients.length)
-  for(const client in clients){
+  console.log("Refreshing permission for "+ client_lists.length)
+  for(const client in client_lists){
     if(client.username == undefined){
       continue
     }
