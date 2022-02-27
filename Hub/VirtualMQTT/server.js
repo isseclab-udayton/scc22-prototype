@@ -290,7 +290,8 @@ setInterval(() => {
 
       const client_published_topics = Object.keys(permission_dict[client_name]['authorize_publish']);
       //Refresh Publish
-      for(const client_published_topic in client_published_topics){
+      for(const idx in client_published_topics){
+        const client_published_topic = client_published_topics[idx]
         const opa_body = {
           "input":{
             "action": "publish",
@@ -321,7 +322,9 @@ setInterval(() => {
     if(permission_dict[client_name]['authorize_subscribe']!=undefined){
       console.log("Refreshing permission for ", client_name,"Sub")
       const client_subscribed_topics = Object.keys(permission_dict[client_name]['authorize_subscribe']);
-      for(const client_subscribied_topic in client_subscribed_topics){
+      for(const idx in client_subscribed_topics){
+        const client_subscribied_topic = client_subscribed_topics[idx]
+
         const opa_body = {
           "input":{
             "action": "subscribe",
