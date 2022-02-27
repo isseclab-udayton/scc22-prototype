@@ -161,14 +161,16 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
 //DONE
 aedes.authorizePublish = function (client, packet, callback) {
   
-  topic=packet.topic.replace("#","99999999999999999999999999999999999")
+  const packet_topic = packet.topic
+  const client_username = client.username
+  const topic=packet_topic.replace("#","99999999999999999999999999999999999")
 
   
 
 
   //Initialize the dictionary
-  if (permission_dict[client.username]['authorize_publish'] == undefined){
-    permission_dict[client.username]['authorize_publish'] = {
+  if (permission_dict[client_username]['authorize_publish'] == undefined){
+    permission_dict[client_username]['authorize_publish'] = {
 
     }
 
@@ -179,45 +181,46 @@ aedes.authorizePublish = function (client, packet, callback) {
   const opa_body = {
     "input":{
       "action": "publish",
-      "tenant_id": client.username,
+      "tenant_id": client_username,
       "topic": topic
         
     }
   }
 
-  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
 
-  console.log("Cheking permission: ", packet.topic)
+  console.log("Cheking permission: ", packet_topic)
   
-  console.log(permission_dict[client.username])
+  console.log(permission_dict[client_username])
 
-  if(permission_dict[client.username]['authorize_publish'][packet.topic] != undefined && ts - permission_dict[client.username]['authorize_publish'][packet.topic] < PERMISSION_CACHE_TIME ){
-    console.log("Cheking permission: ", packet.topic, ">> Cached")
+  if(permission_dict[client_username]['authorize_publish'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][packet_topic] < PERMISSION_CACHE_TIME ){
+    console.log("Cheking permission: ", packet_topic, ">> Cached")
     callback(null)
   }else{
 
     
-    console.log("Cheking permission: ", packet.topic, ">> OPA")
+    console.log("Cheking permission: ", packet_topic, ">> OPA")
 
     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
       .then(res => res.json()) // expecting a json response
       .then(json => {
 
-        console.log(json)
+        
         
         if (json['result']['allow']){
 
-          data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
+          data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
 
-          permission_dict[client.username]['authorize_publish'][packet.topic] = ts
-
+          permission_dict[client_username]['authorize_publish'][packet_topic] = ts
           
-          console.log("Cheking permission: ", packet.topic, ">> OPA DONE")
+          console.log(permission_dict[client_username])
+          
+          console.log("Cheking permission: ", packet_topic, ">> OPA DONE")
 
           callback(null)
           
         }else{
-          permission_dict[client.username]['authorize_publish'][packet.topic] = 0
+          permission_dict[client_username]['authorize_publish'][packet_topic] = 0
 
           callback(new Error('Unauthorized'))
         }
@@ -232,17 +235,19 @@ aedes.authorizePublish = function (client, packet, callback) {
 aedes.authorizeForward = function (client, packet) {
 
   //Assumption: A client must subscribe to the topic to be able to go into this function
+  const packet_topic = packet.topic
+  const client_username = client.username
 
   const topic=packet.topic.replace("#","99999999999999999999999999999999999")
   const opa_body = {
         "input":{
           "action": "subscribe",
-          "tenant_id": client.username,
+          "tenant_id": client_username,
           "topic": topic
           
       }    
   }
-  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
 
   
 
@@ -251,8 +256,8 @@ aedes.authorizeForward = function (client, packet) {
   //If the permission is not expired, refresh permission in background, and check for the permission
  
 
-  if(permission_dict[client.username]['authorize_subscribe'][packet.topic] != undefined && ts - permission_dict[client.username]['authorize_subscribe'][packet.topic] < PERMISSION_CACHE_TIME ){    
-    data_amount[client.username] = data_amount[client.username] + sizeof.sizeof(packet)
+  if(permission_dict[client_username]['authorize_subscribe'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][packet_topic] < PERMISSION_CACHE_TIME ){    
+    data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
 
   }else{
