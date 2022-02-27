@@ -238,8 +238,8 @@ aedes.authorizeForward = function (client, packet) {
 
   }else{
 
-    console.log(permission_dict[client_username])
-    console.log("Checking Forward permission for ",client_username, packet_topic,"DENY")
+    
+    
     
     return
   }
@@ -367,9 +367,7 @@ setInterval(() => {
 
 //Refresh the share ts 
 setInterval(() => {
-  console.log("Refresh ts",ts)
   ts = Date.now();
-  console.log("Refresh ts",ts,"DONE")  
   
 }, 500);
 
