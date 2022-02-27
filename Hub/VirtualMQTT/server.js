@@ -232,7 +232,7 @@ aedes.authorizeForward = function (client, packet) {
 
   //Assumption: A client must subscribe to the topic to be able to go into this function
 
-  const topic=topic.replace("#","99999999999999999999999999999999999")
+  const topic=packet.topic.replace("#","99999999999999999999999999999999999")
   const opa_body = {
         "input":{
           "action": "subscribe",
