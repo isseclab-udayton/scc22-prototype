@@ -187,6 +187,8 @@ aedes.authorizePublish = function (client, packet, callback) {
 
   console.log("Cheking permission: ", packet.topic)
   
+  console.log(permission_dict[client.username])
+
   if(permission_dict[client.username]['authorize_publish'][packet.topic] != undefined && ts - permission_dict[client.username]['authorize_publish'][packet.topic] < PERMISSION_CACHE_TIME ){
     console.log("Cheking permission: ", packet.topic, ">> Cached")
     callback(null)
