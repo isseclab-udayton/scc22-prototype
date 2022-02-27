@@ -275,6 +275,8 @@ setInterval(() => {
       continue
     }
 
+    console.log("Refreshing permission for ", client_name)
+
     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
     
 
