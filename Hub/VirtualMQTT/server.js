@@ -128,7 +128,6 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
   //High level logic:
   // if a topic in this list has not been initialized, the client has not subscribed for it. 
   
-  const sub_topic = sub.topic
   const client_username = client.username
   const topic=sub.topic.replace("#","99999999999999999999999999999999999")
   
@@ -153,11 +152,11 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
     .then(json => {
       if (json['result']['allow']){
         
-        permission_dict[client_username]['authorize_subscribe'][sub_topic] =ts
+        permission_dict[client_username]['authorize_subscribe'][topic] =ts
         callback(null, sub)
         
       }else{
-        console.log("Tenant %s is not authorized to subscribe to %s",client_username,sub_topic)
+        console.log("Tenant %s is not authorized to subscribe to %s",client_username,topic)
         callback(new Error('Unauthorized'))
       }
     });
@@ -219,7 +218,6 @@ aedes.authorizePublish = function (client, packet, callback) {
 aedes.authorizeForward = function (client, packet) {
 
   //Assumption: A client must subscribe to the topic to be able to go into this function
-  const packet_topic = packet.topic
   const client_username = client.username
   const topic=packet.topic.replace("#","99999999999999999999999999999999999")
   
@@ -232,7 +230,7 @@ aedes.authorizeForward = function (client, packet) {
  
     
 
-  if(permission_dict[client_username]['authorize_subscribe'][packet_topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][packet_topic] < PERMISSION_CACHE_TIME ){    
+  if(permission_dict[client_username]['authorize_subscribe'][topic] != undefined && ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
     data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
 
@@ -277,7 +275,7 @@ setInterval(() => {
       continue
     }
 
-    console.log("Refreshing permission for ", client_name)
+    
 
 
     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
@@ -332,10 +330,9 @@ setInterval(() => {
 
         fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
         .then(res => res.json()) // expecting a json response
-        .then(json => {      
+        .then(json => {            
           
           
-          console.log(json)
           
           if (json['result']['allow']){
             data_amount[client_name] = data_amount[client_name] + sizeof.sizeof(packet)
