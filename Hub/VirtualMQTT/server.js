@@ -363,7 +363,7 @@ setInterval(() => {
 setInterval(() => {
   console.log("Refresh ts",ts)
   ts = Date.now();
-  
+  console.log("Refresh ts",ts,"DONE")  
   
 }, 500);
 
