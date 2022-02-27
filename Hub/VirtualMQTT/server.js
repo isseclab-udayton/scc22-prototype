@@ -274,7 +274,6 @@ httpServer.listen(http_port, function () {
 setInterval(() => {
   
 
-  permission_dict[client.username]['authorize_subscribe']
 
   const client_lists = Object.keys(permission_dict)
   
