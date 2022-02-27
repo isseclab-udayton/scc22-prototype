@@ -257,7 +257,10 @@ setInterval(() => {
   console.log("Refreshing permission for "+ clients.length)
   for(const client in clients){
 
-    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)   
+    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+
+    console.log(OPA_TENANT_URL)
+    
 
     const client_subscribed_topics = Object.keys(client.authorize_subscribe);
     const client_published_topics = Object.keys(client.authorize_publish);
