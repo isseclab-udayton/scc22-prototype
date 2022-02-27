@@ -270,11 +270,14 @@ setInterval(() => {
   
   
   console.log("Refreshing permission for "+ client_lists.length)
-  for(const client_name in client_lists){
-    console.log("Refreshing permission for ", client_name)
+  for(const idx in client_lists){
+    const client_name = client_lists[idx]
+    
     if(permission_dict[client_name] == undefined){
       continue
     }
+
+    console.log("Refreshing permission for ", client_name)
 
 
     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
