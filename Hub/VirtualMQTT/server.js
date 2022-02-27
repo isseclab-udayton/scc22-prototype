@@ -87,9 +87,7 @@ aedes.authenticate = function (client, username, password, callback) {
         data_amount[username] = 0 
         client_lists.push(client);
 
-        //Append to the client_lists
-
-        console.log(client_lists)
+        //Append to the client_lists        
         callback(null,true)
 
         
@@ -259,7 +257,7 @@ httpServer.listen(http_port, function () {
 setInterval(() => {
   
   
-  console.log(clients)
+  
   console.log("Refreshing permission for "+ client_lists.length)
   for(const client in client_lists){
     if(client.username == undefined){
