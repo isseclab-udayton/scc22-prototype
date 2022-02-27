@@ -128,7 +128,10 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
   //High level logic:
   // if a topic in this list has not been initialized, the client has not subscribed for it. 
   
+  const sub_topic = sub.topic
+  const client_username = client.username
   const topic=sub.topic.replace("#","99999999999999999999999999999999999")
+  
 
 
   //Assumption: if a topic in this list has not been initialized, the client has not subscribed for it. 
@@ -139,7 +142,7 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
   const opa_body = {
       "input":{
         "action": "subscribe",
-        "tenant_id": client.username,
+        "tenant_id": client_username,
         "topic": topic
         
     }    
@@ -150,11 +153,11 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
     .then(json => {
       if (json['result']['allow']){
         
-        permission_dict[client.username]['authorize_subscribe'][sub.topic] =ts
+        permission_dict[client_username]['authorize_subscribe'][sub_topic] =ts
         callback(null, sub)
         
       }else{
-        console.log("Tenant %s is not authorized to subscribe to %s",client.username,sub.topic)
+        console.log("Tenant %s is not authorized to subscribe to %s",client_username,sub_topic)
         callback(new Error('Unauthorized'))
       }
     });
@@ -272,12 +275,13 @@ setInterval(() => {
       continue
     }
 
-    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)
-
-    
+    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
     
 
     if(permission_dict[client_name]['authorize_publish'] != undefined){
+
+      console.log("Refreshing permission for ", client_name,"Publish")
+
       const client_published_topics = Object.keys(permission_dict[client_name]['authorize_publish']);
       //Refresh Publish
       for(const client_published_topic in client_published_topics){
@@ -309,6 +313,7 @@ setInterval(() => {
 
     //Refresh Subscribe
     if(permission_dict[client_name]['authorize_subscribe']!=undefined){
+      console.log("Refreshing permission for ", client_name,"Sub")
       const client_subscribed_topics = Object.keys(permission_dict[client_name]['authorize_subscribe']);
       for(const client_subscribied_topic in client_subscribed_topics){
         const opa_body = {
