@@ -4,8 +4,8 @@ const mqtt = require('mqtt')
 const { createServer } = require('aedes-server-factory')
 const sizeof = require('sizeof'); 
 
-const PERMISSION_CACHE_TIME = 20000 // Cache in 20 seconds. 
-const PERMISSION_CACHE_REFRESH_TIME=10000 // Trigger a cache refresh in 10 seconds
+const PERMISSION_CACHE_TIME = 10000 // Cache in 20 seconds. 
+const PERMISSION_CACHE_REFRESH_TIME=5000 // Trigger a cache refresh in 10 seconds
 
 
 
@@ -173,11 +173,11 @@ aedes.authorizePublish = function (client, packet, callback) {
 
   
   
-  // const ts = Date.now();
+  const ts = Date.now();
 
-  // if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
-  //   callback(null)
-  // }else{   
+  if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
+    callback(null)
+  }else{   
 
     const opa_body = {
       "input":{
@@ -211,7 +211,7 @@ aedes.authorizePublish = function (client, packet, callback) {
         }
       });      
     
-  // }
+  }
 
 }
 
