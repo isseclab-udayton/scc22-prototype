@@ -4,8 +4,8 @@ const mqtt = require('mqtt')
 const { createServer } = require('aedes-server-factory')
 const sizeof = require('sizeof'); 
 
-const PERMISSION_CACHE_TIME = 10000 // Cache in 20 seconds. 
-const PERMISSION_CACHE_REFRESH_TIME=5000 // Trigger a cache refresh in 10 seconds
+const PERMISSION_CACHE_TIME = 20000 // Cache in 20 seconds. 
+const PERMISSION_CACHE_REFRESH_TIME=10000 // Trigger a cache refresh in 10 seconds
 
 
 
@@ -53,7 +53,7 @@ var mqtt_client = mqtt.connect('mqtt://localhost',{
 let permission_dict = {
   
 }
-
+let ts = Date.now();
 
 //DONE
 
@@ -151,8 +151,6 @@ aedes.authorizeSubscribe = function (client, sub, callback) {
     .then(res => res.json()) // expecting a json response
     .then(json => {
       if (json['result']['allow']){
-
-        const ts = Date.now();
         
         permission_dict[client_username]['authorize_subscribe'][topic] =ts
         callback(null, sub)
@@ -173,7 +171,6 @@ aedes.authorizePublish = function (client, packet, callback) {
 
   
   
-  const ts = Date.now();
 
   if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
     callback(null)
@@ -230,7 +227,6 @@ aedes.authorizeForward = function (client, packet) {
  
     
 
-  const ts = Date.now();
   if(ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
     // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
@@ -265,7 +261,7 @@ setInterval(() => {
   const client_lists = Object.keys(permission_dict)
   
   
-  
+  console.log("Refreshing permission for "+ client_lists.length)
   for(const idx in client_lists){
     const client_name = client_lists[idx]
     
@@ -366,5 +362,10 @@ setInterval(() => {
 
 
 
+//Refresh the share ts 
+setInterval(() => {
+  ts = Date.now();
+  
+}, 500);
 
 
