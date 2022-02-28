@@ -195,7 +195,7 @@ aedes.authorizePublish = function (client, packet, callback) {
         
         if (json['result']['allow']){
 
-          data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
+          // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
 
           permission_dict[client_username]['authorize_publish'][packet_topic] = ts
           
@@ -228,7 +228,7 @@ aedes.authorizeForward = function (client, packet) {
     
 
   if(ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
-    data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
+    // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
     return packet
 
   }else{
