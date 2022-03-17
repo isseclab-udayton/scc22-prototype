@@ -105,59 +105,61 @@ let ts = Date.now();
 //DONE
 aedes.authenticate = function (client, username, password, callback) {
 
-  if (username ==undefined || password == undefined){
-    callback(null,true)
-    return
-  }
+  callback(null,true)
 
-  client.username = username
-  client.password = password.toString()
+  // if (username ==undefined || password == undefined){
+  //   callback(null,true)
+  //   return
+  // }
+
+  // client.username = username
+  // client.password = password.toString()
   
   
-  const login_body={
-    'username': client.username,
-    "password": client.password
-  }
+  // const login_body={
+  //   'username': client.username,
+  //   "password": client.password
+  // }
 
 
-  fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
-    .then(res => res.json()) // expecting a json response
-    .then(json => {
+  // fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
+  //   .then(res => res.json()) // expecting a json response
+  //   .then(json => {
       
-      if (json['status']){
-        console.log("User %s is authenticated",username)      
+  //     if (json['status']){
+  //       console.log("User %s is authenticated",username)      
 
-        data_amount[username] = 0 
+  //       data_amount[username] = 0 
         
-        if (permission_dict[client.username] == undefined){
+  //       if (permission_dict[client.username] == undefined){
 
-          permission_dict[client.username] = {
-            'authorize_publish': {
+  //         permission_dict[client.username] = {
+  //           'authorize_publish': {
 
-            },         
-            'authorize_subscribe': {
+  //           },         
+  //           'authorize_subscribe': {
               
-            }
+  //           }
             
-          }
-        }
+  //         }
+  //       }
 
-        //Append to the client_lists        
-        callback(null,true)
+  //       //Append to the client_lists        
+  //       callback(null,true)
 
         
         
 
 
-      }else{
+  //     }else{
 
-        console.log("User %s is NOT authenticated",username)
+  //       console.log("User %s is NOT authenticated",username)
 
-        var error = new Error('Auth error')
-        error.returnCode = 4
-        callback(error, null)
-      }
-    });
+  //       var error = new Error('Auth error')
+  //       error.returnCode = 4
+  //       callback(error, null)
+  //     }
+  //   });
 
 }
 
