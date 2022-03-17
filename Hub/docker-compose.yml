@@ -22,14 +22,13 @@ services:
     networks:
       - default
 
-  mqtt_proxy:
+  virtual-mqtt:
     build:
-      context: ./MQTT-Proxy
+      context: ./VirtualMQTT
     depends_on:
-      - virtual-mqtt_1
-      - virtual-mqtt_2
-      - virtual-mqtt_3
-      - virtual-mqtt_4
+      - opa_tenant-1
+      - opa_tenant-2
+      - opa_context_sensing
     environment:
       OPA_HOST: "http://opa:8181"
       AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
@@ -37,99 +36,19 @@ services:
     expose:
       - "1883"
       - "8888"
-
-    
     ports:
-      - "1883:1883"
-      - "8888:8888"
+      - "11883:1883"
+      - "18888:8888"
     networks:
       - default
 
-  virtual-mqtt_1:
-    build:
-      context: ./VirtualMQTT
-    depends_on:
-      - opa_tenant-1
-      - opa_tenant-2
-      - opa_context_sensing
-    environment:
-      OPA_HOST: "http://opa:8181"
-      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
-      
-    # expose:
-    #   - "1883"
-    #   - "8888"
-    # ports:
-    #   - "11883:1883"
-    #   - "18888:8888"
-    networks:
-      - default
-
-  virtual-mqtt_2:
-    build:
-      context: ./VirtualMQTT
-    depends_on:
-      - opa_tenant-1
-      - opa_tenant-2
-      - opa_context_sensing
-    environment:
-      OPA_HOST: "http://opa:8181"
-      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
-      
-    # expose:
-    #   - "1883"
-    #   - "8888"
-    # ports:
-    #   - "21883:1883"
-    #   - "28888:8888"
-    networks:
-      - default
-
-  virtual-mqtt_3:
-    build:
-      context: ./VirtualMQTT
-    depends_on:
-      - opa_tenant-1
-      - opa_tenant-2
-      - opa_context_sensing
-    environment:
-      OPA_HOST: "http://opa:8181"
-      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
-      
-    # expose:
-    #   - "1883"
-    #   - "8888"
-    # ports:
-    #   - "21883:1883"
-    #   - "28888:8888"
-    networks:
-      - default
-
-  virtual-mqtt_4:
-    build:
-      context: ./VirtualMQTT
-    depends_on:
-      - opa_tenant-1
-      - opa_tenant-2
-      - opa_context_sensing
-    environment:
-      OPA_HOST: "http://opa:8181"
-      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
-      
-    # expose:
-    #   - "1883"
-    #   - "8888"
-    # ports:
-    #   - "21883:1883"
-    #   - "28888:8888"
-    networks:
-      - default
+  
 
   context-sensing:
     build:
       context: ./ContextSensing
     depends_on:
-      - mqtt_proxy   
+      - virtual-mqtt 
     environment:
       MQTT_HOST: "mqtt://virtual-mqtt:1883"      
       BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
