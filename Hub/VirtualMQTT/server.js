@@ -5,14 +5,7 @@ const mongoPersistence = require('aedes-persistence-mongodb')
 
 const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104"
 
-const MONGO_URL_DB = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104/aedes-clusters"
 
-
-// const client = new MongoClient(MONGO_URL_DB);
-
-// console.log(client)
-
-// const dbo = client.db("aedes-clusters")
 
 
 const aedes = require('aedes')({
@@ -105,7 +98,21 @@ let ts = Date.now();
 //DONE
 aedes.authenticate = function (client, username, password, callback) {
 
+  if (permission_dict[client.username] == undefined){
+
+    permission_dict[client.username] = {
+      'authorize_publish': {
+
+      },         
+      'authorize_subscribe': {
+        
+      }
+      
+    }
+  }
+
   callback(null,true)
+
 
   // if (username ==undefined || password == undefined){
   //   callback(null,true)
