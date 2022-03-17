@@ -111,6 +111,8 @@ aedes.authenticate = function (client, username, password, callback) {
     }
   }
 
+  client.username = username
+
   callback(null,true)
 
 
