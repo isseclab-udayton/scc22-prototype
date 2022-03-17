@@ -5,7 +5,14 @@ const mongoPersistence = require('aedes-persistence-mongodb')
 
 const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104"
 
+const MONGO_URL_DB = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104/aedes-clusters"
 
+
+// const client = new MongoClient(MONGO_URL_DB);
+
+// console.log(client)
+
+// const dbo = client.db("aedes-clusters")
 
 
 const aedes = require('aedes')({
@@ -95,64 +102,65 @@ let ts = Date.now();
 
 
 
-// //DONE
-// aedes.authenticate = function (client, username, password, callback) {
+//DONE
+aedes.authenticate = function (client, username, password, callback) {
 
-//   if (username ==undefined || password == undefined){
-//     callback(null,true)
-//     return
-//   }
+  if (username ==undefined || password == undefined){
+    callback(null,true)
+    return
+  }
 
-//   client.username = username
-//   client.password = password.toString()
+  client.username = username
+  client.password = password.toString()
   
   
-//   const login_body={
-//     'username': client.username,
-//     "password": client.password
-//   }
+  const login_body={
+    'username': client.username,
+    "password": client.password
+  }
 
 
-//   fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
-//     .then(res => res.json()) // expecting a json response
-//     .then(json => {
+  fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
+    .then(res => res.json()) // expecting a json response
+    .then(json => {
       
-//       if (json['status']){
-//         console.log("User %s is authenticated",username)      
+      if (json['status']){
+        console.log("User %s is authenticated",username)      
 
-//         data_amount[username] = 0 
+        data_amount[username] = 0 
         
-//         if (permission_dict[client.username] == undefined){
+        if (permission_dict[client.username] == undefined){
 
-//           permission_dict[client.username] = {
-//             'authorize_publish': {
+          permission_dict[client.username] = {
+            'authorize_publish': {
 
-//             },         
-//             'authorize_subscribe': {
+            },         
+            'authorize_subscribe': {
               
-//             }
+            }
             
-//           }
-//         }
+          }
+        }
 
-//         //Append to the client_lists        
-//         callback(null,true)
+        //Append to the client_lists        
+        callback(null,true)
 
         
         
 
 
-//       }else{
+      }else{
 
-//         console.log("User %s is NOT authenticated",username)
+        console.log("User %s is NOT authenticated",username)
 
-//         var error = new Error('Auth error')
-//         error.returnCode = 4
-//         callback(error, null)
-//       }
-//     });
+        var error = new Error('Auth error')
+        error.returnCode = 4
+        callback(error, null)
+      }
+    });
 
-// }
+}
+
 
 // //DONE
 // aedes.authorizeSubscribe = function (client, sub, callback) {
@@ -286,118 +294,118 @@ httpServer.listen(http_port, function () {
 
 
 
-setInterval(() => {
+// setInterval(() => {
   
 
 
-  const client_lists = Object.keys(permission_dict)
+//   const client_lists = Object.keys(permission_dict)
   
   
-  console.log("Refreshing permission for "+ client_lists.length)
-  for(const idx in client_lists){
-    const client_name = client_lists[idx]
+//   console.log("Refreshing permission for "+ client_lists.length)
+//   for(const idx in client_lists){
+//     const client_name = client_lists[idx]
     
-    if(permission_dict[client_name] == undefined){
-      continue
-    }
+//     if(permission_dict[client_name] == undefined){
+//       continue
+//     }
 
-    
-
-
-    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
     
 
-    if(permission_dict[client_name]['authorize_publish'] != undefined){
 
-      console.log("Refreshing permission for ", client_name,"Publish")
+//     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_name}`)    
+    
 
-      const client_published_topics = Object.keys(permission_dict[client_name]['authorize_publish']);
-      //Refresh Publish
-      for(const idx in client_published_topics){
-        const client_published_topic = client_published_topics[idx]
-        const opa_body = {
-          "input":{
-            "action": "publish",
-            "tenant_id": client_name,
-            "topic": client_published_topic
+//     if(permission_dict[client_name]['authorize_publish'] != undefined){
+
+//       console.log("Refreshing permission for ", client_name,"Publish")
+
+//       const client_published_topics = Object.keys(permission_dict[client_name]['authorize_publish']);
+//       //Refresh Publish
+//       for(const idx in client_published_topics){
+//         const client_published_topic = client_published_topics[idx]
+//         const opa_body = {
+//           "input":{
+//             "action": "publish",
+//             "tenant_id": client_name,
+//             "topic": client_published_topic
               
-          }
-        }
+//           }
+//         }
 
-        fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-        .then(res => res.json()) // expecting a json response
-        .then(json => {
+//         fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+//         .then(res => res.json()) // expecting a json response
+//         .then(json => {
           
-          if (json['result']['allow']){
+//           if (json['result']['allow']){
 
-            permission_dict[client_name]['authorize_publish'][client_published_topic] = ts
+//             permission_dict[client_name]['authorize_publish'][client_published_topic] = ts
             
-          }else{
-            permission_dict[client_name]['authorize_publish'][client_published_topic] = 0
-          }
-        });    
-      }
-    }
+//           }else{
+//             permission_dict[client_name]['authorize_publish'][client_published_topic] = 0
+//           }
+//         });    
+//       }
+//     }
 
 
-    //Refresh Subscribe
-    if(permission_dict[client_name]['authorize_subscribe']!=undefined){
-      console.log("Refreshing permission for ", client_name,"Sub")
-      const client_subscribed_topics = Object.keys(permission_dict[client_name]['authorize_subscribe']);
-      for(const idx in client_subscribed_topics){
-        const client_subscribied_topic = client_subscribed_topics[idx]
+//     //Refresh Subscribe
+//     if(permission_dict[client_name]['authorize_subscribe']!=undefined){
+//       console.log("Refreshing permission for ", client_name,"Sub")
+//       const client_subscribed_topics = Object.keys(permission_dict[client_name]['authorize_subscribe']);
+//       for(const idx in client_subscribed_topics){
+//         const client_subscribied_topic = client_subscribed_topics[idx]
 
-        const opa_body = {
-          "input":{
-            "action": "subscribe",
-            "tenant_id": client_name,
-            "topic": client_subscribied_topic
+//         const opa_body = {
+//           "input":{
+//             "action": "subscribe",
+//             "tenant_id": client_name,
+//             "topic": client_subscribied_topic
               
-          }
-        }
+//           }
+//         }
 
-        fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-        .then(res => res.json()) // expecting a json response
-        .then(json => {            
+//         fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+//         .then(res => res.json()) // expecting a json response
+//         .then(json => {            
           
           
           
-          if (json['result']['allow']){
-            permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = ts
+//           if (json['result']['allow']){
+//             permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = ts
             
-          }else{
-            permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = 0
-          }
-        });    
-      }
-    }
+//           }else{
+//             permission_dict[client_name]['authorize_subscribe'][client_subscribied_topic] = 0
+//           }
+//         });    
+//       }
+//     }
 
-}
-},PERMISSION_CACHE_REFRESH_TIME);
+// }
+// },PERMISSION_CACHE_REFRESH_TIME);
 
-setInterval(() => {
+// setInterval(() => {
 
-  for (const [tenant_id, value] of Object.entries(data_amount)) {
+//   for (const [tenant_id, value] of Object.entries(data_amount)) {
     
 
-    const topic = `${DATA_AMOUNT_TOPIC}/${tenant_id}`
+//     const topic = `${DATA_AMOUNT_TOPIC}/${tenant_id}`
     
     
-    mqtt_client.publish(topic, `${data_amount[tenant_id]}`)
-    data_amount[tenant_id] = 0
+//     mqtt_client.publish(topic, `${data_amount[tenant_id]}`)
+//     data_amount[tenant_id] = 0
 
     
 
-  }
+//   }
   
-}, 6000);
+// }, 6000);
 
 
 
-//Refresh the share ts 
-setInterval(() => {
-  ts = Date.now();
+// //Refresh the share ts 
+// setInterval(() => {
+//   ts = Date.now();
   
-}, 500);
+// }, 500);
 
 
