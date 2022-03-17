@@ -32,6 +32,7 @@ services:
     environment:
       OPA_HOST: "http://opa:8181"
       AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
+      MONGO_URL: ${MONGO_URL}
       
     expose:
       - "1883"
