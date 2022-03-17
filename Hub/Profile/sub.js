@@ -1,5 +1,5 @@
 var mqtt = require('mqtt')
-var client  = mqtt.connect('mqtt://54.167.63.40',{username:"context_sensing",password:"123456"})
+var client  = mqtt.connect('mqtt://192.168.99.104:1883',{username:"context_sensing",password:"123456"})
 
 client.on('connect', function () {  
     

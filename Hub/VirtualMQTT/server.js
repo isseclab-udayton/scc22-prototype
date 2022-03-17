@@ -1,8 +1,40 @@
-const aedes = require('aedes')()
+const { MongoClient } = require("mongodb");
+
+const mqemitter = require('mqemitter-mongodb')
+const mongoPersistence = require('aedes-persistence-mongodb')
+
+const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104"
+
+
+
+
+const aedes = require('aedes')({
+  mq: mqemitter({
+    url: MONGO_URL,
+    database: "aedes-clusters"
+  }),
+  persistence: mongoPersistence({
+    
+
+    url: MONGO_URL,
+    // mongoOptions: { 
+    //   auth: {
+    //     user: 'root',
+    //     password: 'password123'
+    //   }
+    // },
+    // Optional ttl settings
+    ttl: {
+      packets: 300, // Number of seconds
+      subscriptions: 300
+    }
+  })
+})
 const mqtt = require('mqtt')
 
+
 const { createServer } = require('aedes-server-factory')
-const sizeof = require('sizeof'); 
+// const sizeof = require('sizeof'); 
 
 const PERMISSION_CACHE_TIME = 20000 // Cache in 20 seconds. 
 const PERMISSION_CACHE_REFRESH_TIME=10000 // Trigger a cache refresh in 10 seconds
@@ -32,7 +64,7 @@ const fetch = require('node-fetch');
 const OPA_HOST = process.env.OPA_HOST || 'http:/opa:8181'
 const OPA_URL = urljoin(OPA_HOST, 'v1/data/app/iot');
 
-const AUTHENTICATION_HOST = process.env.AUTHENTICATION_HOST || 'http://192.168.99.101:3000'
+const AUTHENTICATION_HOST = process.env.AUTHENTICATION_HOST || 'http://192.168.99.104:3000'
 const AUTHENTICATION_URL = urljoin(AUTHENTICATION_HOST, '/login');
 
 const DATA_AMOUNT_TOPIC = "/hub/data_amount/mqtt"
@@ -122,126 +154,126 @@ aedes.authenticate = function (client, username, password, callback) {
 
 }
 
-//DONE
-aedes.authorizeSubscribe = function (client, sub, callback) {
+// //DONE
+// aedes.authorizeSubscribe = function (client, sub, callback) {
 
-  //High level logic:
-  // if a topic in this list has not been initialized, the client has not subscribed for it. 
+//   //High level logic:
+//   // if a topic in this list has not been initialized, the client has not subscribed for it. 
   
-  const client_username = client.username
-  const topic=sub.topic.replace("#","99999999999999999999999999999999999")
+//   const client_username = client.username
+//   const topic=sub.topic.replace("#","99999999999999999999999999999999999")
   
 
 
-  //Assumption: if a topic in this list has not been initialized, the client has not subscribed for it. 
-  //Request for permission
+//   //Assumption: if a topic in this list has not been initialized, the client has not subscribed for it. 
+//   //Request for permission
    
 
-  const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
-  const opa_body = {
-      "input":{
-        "action": "subscribe",
-        "tenant_id": client_username,
-        "topic": topic
+//   const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client.username}`)
+//   const opa_body = {
+//       "input":{
+//         "action": "subscribe",
+//         "tenant_id": client_username,
+//         "topic": topic
         
-    }    
-  }
+//     }    
+//   }
   
-  fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-    .then(res => res.json()) // expecting a json response
-    .then(json => {
-      if (json['result']['allow']){
+//   fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+//     .then(res => res.json()) // expecting a json response
+//     .then(json => {
+//       if (json['result']['allow']){
         
-        permission_dict[client_username]['authorize_subscribe'][topic] =ts
-        callback(null, sub)
+//         permission_dict[client_username]['authorize_subscribe'][topic] =ts
+//         callback(null, sub)
         
-      }else{
-        console.log("Tenant %s is not authorized to subscribe to %s",client_username,topic)
-        callback(new Error('Unauthorized'))
-      }
-    });
-  }
+//       }else{
+//         console.log("Tenant %s is not authorized to subscribe to %s",client_username,topic)
+//         callback(new Error('Unauthorized'))
+//       }
+//     });
+//   }
 
-//DONE
-aedes.authorizePublish = function (client, packet, callback) {
+// //DONE
+// aedes.authorizePublish = function (client, packet, callback) {
   
-  const packet_topic = packet.topic
-  const client_username = client.username
-  const topic=packet_topic.replace("#","99999999999999999999999999999999999")
+//   const packet_topic = packet.topic
+//   const client_username = client.username
+//   const topic=packet_topic.replace("#","99999999999999999999999999999999999")
 
   
   
 
-  if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
-    callback(null)
-  }else{   
+//   if(permission_dict[client_username]['authorize_publish'][topic] != undefined && ts - permission_dict[client_username]['authorize_publish'][topic] < PERMISSION_CACHE_TIME ){    
+//     callback(null)
+//   }else{   
 
-    const opa_body = {
-      "input":{
-        "action": "publish",
-        "tenant_id": client_username,
-        "topic": topic
+//     const opa_body = {
+//       "input":{
+//         "action": "publish",
+//         "tenant_id": client_username,
+//         "topic": topic
           
-      }
-    }  
-    const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
+//       }
+//     }  
+//     const OPA_TENANT_URL = OPA_URL.replace("opa",`opa_${client_username}`)
     
 
-    fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
-      .then(res => res.json()) // expecting a json response
-      .then(json => {
+//     fetch(OPA_TENANT_URL, { method: 'POST', body: JSON.stringify(opa_body) })
+//       .then(res => res.json()) // expecting a json response
+//       .then(json => {
 
         
         
-        if (json['result']['allow']){
+//         if (json['result']['allow']){
 
-          // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
+//           // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
 
-          permission_dict[client_username]['authorize_publish'][packet_topic] = ts
+//           permission_dict[client_username]['authorize_publish'][packet_topic] = ts
           
-          callback(null)
+//           callback(null)
           
-        }else{
-          permission_dict[client_username]['authorize_publish'][packet_topic] = 0
+//         }else{
+//           permission_dict[client_username]['authorize_publish'][packet_topic] = 0
 
-          callback(new Error('Unauthorized'))
-        }
-      });      
+//           callback(new Error('Unauthorized'))
+//         }
+//       });      
     
-  }
+//   }
 
-}
+// }
 
-aedes.authorizeForward = function (client, packet) {
+// aedes.authorizeForward = function (client, packet) {
 
-  //Assumption: A client must subscribe to the topic to be able to go into this function
-  const client_username = client.username
-  const topic=packet.topic.replace("#","99999999999999999999999999999999999")
+//   //Assumption: A client must subscribe to the topic to be able to go into this function
+//   const client_username = client.username
+//   const topic=packet.topic.replace("#","99999999999999999999999999999999999")
   
 
   
 
-  //Assumption: There is a timer to set the permission
-  //If the permission expired, force to await requesting permission
-  //If the permission is not expired, refresh permission in background, and check for the permission
+//   //Assumption: There is a timer to set the permission
+//   //If the permission expired, force to await requesting permission
+//   //If the permission is not expired, refresh permission in background, and check for the permission
  
     
 
-  if(ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
-    // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
-    return packet
+//   if(ts - permission_dict[client_username]['authorize_subscribe'][topic] < PERMISSION_CACHE_TIME ){    
+//     // data_amount[client_username] = data_amount[client_username] + sizeof.sizeof(packet)
+//     return packet
 
-  }else{
+//   }else{
    
-    return
-  }
+//     return
+//   }
 
   
 
-  //Check if the permission is granted, call the callback function
+//   //Check if the permission is granted, call the callback function
   
   
-}
+// }
 
 
 server.listen(port, function () {
