@@ -25,6 +25,8 @@ services:
   virtual-mqtt:
     build:
       context: ./VirtualMQTT
+    sysctls:
+          - net.ipv4.ip_local_port_range="15000 64000"
     depends_on:
       - opa_tenant-1
       - opa_tenant-2
