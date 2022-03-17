@@ -98,6 +98,8 @@ let ts = Date.now();
 //DONE
 aedes.authenticate = function (client, username, password, callback) {
 
+  client.username = username
+
   if (permission_dict[client.username] == undefined){
 
     permission_dict[client.username] = {
@@ -111,7 +113,7 @@ aedes.authenticate = function (client, username, password, callback) {
     }
   }
 
-  client.username = username
+  
 
   callback(null,true)
 
