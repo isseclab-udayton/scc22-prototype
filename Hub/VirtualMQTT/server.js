@@ -1,8 +1,40 @@
-const aedes = require('aedes')()
+const { MongoClient } = require("mongodb");
+
+const mqemitter = require('mqemitter-mongodb')
+const mongoPersistence = require('aedes-persistence-mongodb')
+
+const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password123@192.168.99.104"
+
+
+
+
+const aedes = require('aedes')({
+  mq: mqemitter({
+    url: MONGO_URL,
+    database: "aedes-clusters"
+  }),
+  persistence: mongoPersistence({
+    
+
+    url: MONGO_URL,
+    // mongoOptions: { 
+    //   auth: {
+    //     user: 'root',
+    //     password: 'password123'
+    //   }
+    // },
+    // Optional ttl settings
+    ttl: {
+      packets: 300, // Number of seconds
+      subscriptions: 300
+    }
+  })
+})
 const mqtt = require('mqtt')
 
+
 const { createServer } = require('aedes-server-factory')
-const sizeof = require('sizeof'); 
+// const sizeof = require('sizeof'); 
 
 const PERMISSION_CACHE_TIME = 20000 // Cache in 20 seconds. 
 const PERMISSION_CACHE_REFRESH_TIME=10000 // Trigger a cache refresh in 10 seconds
@@ -32,7 +64,7 @@ const fetch = require('node-fetch');
 const OPA_HOST = process.env.OPA_HOST || 'http:/opa:8181'
 const OPA_URL = urljoin(OPA_HOST, 'v1/data/app/iot');
 
-const AUTHENTICATION_HOST = process.env.AUTHENTICATION_HOST || 'http://192.168.99.101:3000'
+const AUTHENTICATION_HOST = process.env.AUTHENTICATION_HOST || 'http://192.168.99.104:3000'
 const AUTHENTICATION_URL = urljoin(AUTHENTICATION_HOST, '/login');
 
 const DATA_AMOUNT_TOPIC = "/hub/data_amount/mqtt"
@@ -66,61 +98,82 @@ let ts = Date.now();
 //DONE
 aedes.authenticate = function (client, username, password, callback) {
 
-  if (username ==undefined || password == undefined){
-    callback(null,true)
-    return
-  }
-
   client.username = username
-  client.password = password.toString()
-  
-  
-  const login_body={
-    'username': client.username,
-    "password": client.password
+
+  if (permission_dict[client.username] == undefined){
+
+    permission_dict[client.username] = {
+      'authorize_publish': {
+
+      },         
+      'authorize_subscribe': {
+        
+      }
+      
+    }
   }
 
+  
 
-  fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
-    .then(res => res.json()) // expecting a json response
-    .then(json => {
+  callback(null,true)
+
+
+  // if (username ==undefined || password == undefined){
+  //   callback(null,true)
+  //   return
+  // }
+
+  // client.username = username
+  // client.password = password.toString()
+  
+  
+  // const login_body={
+  //   'username': client.username,
+  //   "password": client.password
+  // }
+
+
+  // fetch(AUTHENTICATION_URL, { method: 'POST', body: JSON.stringify(login_body) })
+  //   .then(res => res.json()) // expecting a json response
+  //   .then(json => {
       
-      if (json['status']){
-        console.log("User %s is authenticated",username)      
+  //     if (json['status']){
+  //       console.log("User %s is authenticated",username)      
 
-        data_amount[username] = 0 
+  //       data_amount[username] = 0 
         
-        if (permission_dict[client.username] == undefined){
+  //       if (permission_dict[client.username] == undefined){
 
-          permission_dict[client.username] = {
-            'authorize_publish': {
+  //         permission_dict[client.username] = {
+  //           'authorize_publish': {
 
-            },         
-            'authorize_subscribe': {
+  //           },         
+  //           'authorize_subscribe': {
               
-            }
+  //           }
             
-          }
-        }
+  //         }
+  //       }
 
-        //Append to the client_lists        
-        callback(null,true)
+  //       //Append to the client_lists        
+  //       callback(null,true)
 
         
         
 
 
-      }else{
+  //     }else{
 
-        console.log("User %s is NOT authenticated",username)
+  //       console.log("User %s is NOT authenticated",username)
 
-        var error = new Error('Auth error')
-        error.returnCode = 4
-        callback(error, null)
-      }
-    });
+  //       var error = new Error('Auth error')
+  //       error.returnCode = 4
+  //       callback(error, null)
+  //     }
+  //   });
 
 }
+
 
 //DONE
 aedes.authorizeSubscribe = function (client, sub, callback) {

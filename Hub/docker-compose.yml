@@ -25,6 +25,8 @@ services:
   virtual-mqtt:
     build:
       context: ./VirtualMQTT
+    sysctls:
+          - net.ipv4.ip_local_port_range=15000   60999
     depends_on:
       - opa_tenant-1
       - opa_tenant-2
@@ -32,6 +34,7 @@ services:
     environment:
       OPA_HOST: "http://opa:8181"
       AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
+      MONGO_URL: ${MONGO_URL}
       
     expose:
       - "1883"
@@ -42,11 +45,13 @@ services:
     networks:
       - default
 
+  
+
   context-sensing:
     build:
       context: ./ContextSensing
     depends_on:
-      - virtual-mqtt      
+      - virtual-mqtt 
     environment:
       MQTT_HOST: "mqtt://virtual-mqtt:1883"      
       BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
