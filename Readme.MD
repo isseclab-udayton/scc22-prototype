@@ -114,8 +114,17 @@ To import the data, use MongoCompass to import the data to the following collect
 - policies
 - contexts
 
+
+## System Architecture
+The services are designed for setting up using Docker. 
+![Alt text](/readme/img/system_architecture.png.png?raw=true "System Architecture")
+
+
 ## Steps to run the system
-Prerequisite: You must install docker and docker-compose on your computer:
+
+
+### Step #1: Install Docker & docker-compose on your computer
+Follow the instruction to install docker and docker-compose
 - Install Docker:  https://docs.docker.com/get-docker/
 - Install Docker compose: https://docs.docker.com/compose/install
 
