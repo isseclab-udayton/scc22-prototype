@@ -37,8 +37,7 @@ In this research, we have implemented two applications using MQTT protocol and R
 
 ```
 .
-│   README.md:
-│   readme\img    
+│   README.md
 │
 └───Cloud
 │   └───Cloud-Kafka
@@ -116,7 +115,10 @@ To import the data, use MongoCompass to import the data to the following collect
 - contexts
 
 ## Steps to run the system
-Prerequisite: You must install docker and docker-compose on your computer
+Prerequisite: You must install docker and docker-compose on your computer:
+- Install Docker:  https://docs.docker.com/get-docker/
+- Install Docker compose: https://docs.docker.com/compose/install
+
 1. Start Kafka
 ```
 cd Cloud-Kafka
