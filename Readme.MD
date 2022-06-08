@@ -117,7 +117,7 @@ To import the data, use MongoCompass to import the data to the following collect
 
 ## System Architecture
 The services are designed for setting up using Docker. 
-![Alt text](/readme/img/system_architecture.png.png?raw=true "System Architecture")
+![Alt text](/readme/img/system_architecture.png?raw=true "System Architecture")
 
 
 ## Steps to run the system
