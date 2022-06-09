@@ -115,15 +115,26 @@ To import the data, use MongoCompass to import the data to the following collect
 - contexts
 
 
-## System Architecture
+## Principal System Architecture
 The services are designed for setting up using Docker. 
+The following system diagram illustrates the system architecture of how the services can be set up. Although it is designed using AWS components, it shows the principal design that we can use to set up in any cloud environment. 
 ![Alt text](/readme/img/system_architecture.png?raw=true "System Architecture")
 
+There are two ( or more ) sites in the system: The Cloud and the Hub have a private link to connect two locations to ensure the Kafka data can be transferred securely from the Cloud to the hubs.
 
-## Steps to run the system
+On the Cloud, we should have a private subnet and a database subnet that is also private. We set up Kafka and MongoDB on the database subnets while the dockerized services are in the private subnets. The API service stays behind a Load balancer for high availability purposes. 
+
+On the Hub, we have a public subnet and a private subnet. The hub services are set up on the private one with scalable capability. A network load balancer is set up on the public subnet to transfer the packets on layer four from the clients (publisher and subscriber) to the MQTT services.
 
 
-### Step #1: Install Docker & docker-compose on your computer
+## System Architecture in our demo
+To simplify the setup, we simply use docker compose on EC2 instances.
+
+
+
+## Steps to run the system using Docker-Compose on AWS
+
+Presequisite:  Install Docker & docker-compose on your computer
 Follow the instruction to install docker and docker-compose
 - Install Docker:  https://docs.docker.com/get-docker/
 - Install Docker compose: https://docs.docker.com/compose/install
