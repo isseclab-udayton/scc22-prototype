@@ -1,0 +1,15 @@
+[{
+  "_id": {
+    "$oid": "60eb5708a8226c4700c9cebc"
+  },
+  "people_count": {
+    "store_x": {
+      "topic": "/smartcity/camera/people_count/usa/ohio/store_x/city_ai"
+    }
+  },
+  "data_amount": {
+    "mqtt": {
+      "topic": "/hub/data_amount/mqtt/#"
+    }
+  }
+}]

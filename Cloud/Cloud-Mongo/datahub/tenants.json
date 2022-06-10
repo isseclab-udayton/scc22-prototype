@@ -1,0 +1,37 @@
+[{
+  "_id": {
+    "$oid": "60eb53dba8226c4700c9ceba"
+  },
+  "tenant_name": "tenant-1",
+  "password": "$2a$10$WOn/FWpBjKA/CiG/149/i.NUdstLxx5rdrQcApn1k8srIyl8wbZzu"
+},{
+  "_id": {
+    "$oid": "60eb54447a811456f0ec37b7"
+  },
+  "tenant_name": "tenant-2",
+  "password": "$2a$10$Q63P94a/FeH7oIsyEWQ5xeWgmkgFfg1/vPAxJAEDtyPiT/zbEzUfm"
+},{
+  "_id": {
+    "$oid": "60eb544d7a811456f0ec37b8"
+  },
+  "tenant_name": "tenant-3",
+  "password": "$2a$10$94j5fA15vdE3S2qmR//fYO94cYIdMSnmabhzO2xeTTaujDhUrE7JG"
+},{
+  "_id": {
+    "$oid": "60eb54557a811456f0ec37b9"
+  },
+  "tenant_name": "tenant-4",
+  "password": "$2a$10$7qyje5mVoogKNlU8zvrDCenm/trQQQ9lTsix99Im/868rLkx1lfvm"
+},{
+  "_id": {
+    "$oid": "60eb54647a811456f0ec37ba"
+  },
+  "tenant_name": "context_sensing",
+  "password": "$2a$10$9ZsDzxHPTNj.umrofhevgeqjb4nj9YbPB6RXj2Vz/CLsTLH4Q7UFm"
+},{
+  "_id": {
+    "$oid": "60ecbcb5e8b037173c7abb9f"
+  },
+  "tenant_name": "mqtt_system",
+  "password": "$2a$10$QibK1FWt7AZVmSZ03pGrSOunz8pc5rt90sfQiBh4wBfpGs6HOypuu"
+}]

@@ -1,0 +1,218 @@
+[{
+  "_id": {
+    "$oid": "60eb5488a8226c4700c9cebb"
+  },
+  "tenant_name": "tenant-1",
+  "policies": [
+    {
+      "Name": "Allow Tenant-1 of City Surveillance to publish to the stream",
+      "Effect": "Allow",
+      "Action": [
+        "publish"
+      ],
+      "Resource": [
+        "/smartcity/camera/stream/usa/ohio/store_x/city_surveillance"
+      ]
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "60eb55667a811456f0ec37bb"
+  },
+  "tenant_name": "tenant-2",
+  "policies": [
+    {
+      "id": "1",
+      "Name": "Allow City AI to subscribe the Video",
+      "Effect": "Allow",
+      "Action": [
+        "subscribe"
+      ],
+      "Resource": [
+        "/smartcity/camera/stream/usa/ohio/store_x/city_surveillance"
+      ]
+    },
+    {
+      "Name": "Allow City AI to publish the people count",
+      "Action": [
+        "publish"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/people_count/usa/ohio/store_x/city_ai"
+      ]
+    },
+    {
+      "Name": "Allow City AI to subscribe the people count",
+      "Action": [
+        "subscribe"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/people_count/usa/ohio/store_x/city_ai"
+      ]
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "60eb56587a811456f0ec37be"
+  },
+  "tenant_name": "tenant-3",
+  "policies": [
+    {
+      "Name": "Allow tenant-3 to subscribe the People Count",
+      "Action": [
+        "subscribe"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/people_count/usa/ohio/store_x/city_ai"
+      ]
+    },
+    {
+      "Name": "Allow tenant-3 to subscribe the Video if people count >= 10 for 5 minutes",
+      "Action": [
+        "subscribe"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/stream/usa/ohio/store_x/city_surveillance"
+      ],
+      "Condition": {
+        "AnyOf": [
+          {
+            "object": "people_count",
+            "location": "store_x",
+            "max_5mins": {
+              "gt": 15
+            }
+          }
+        ],
+        "All": [
+          {
+            "object": "data_amount",
+            "protocol": "mqtt",
+            "lasthour_mb": {
+              "lt": 3000
+            }
+          },
+          {
+            "object": "data_amount",
+            "protocol": "mqtt",
+            "last24hour_mb": {
+              "lt": 30000
+            }
+          }
+        ]
+      }
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "60eb56a27a811456f0ec37c0"
+  },
+  "tenant_name": "tenant-4",
+  "policies": [
+    {
+      "Name": "Allow tenant-4 to subscribe the People Count",
+      "Action": [
+        "subscribe"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/people_count/usa/ohio/store_x/city_ai"
+      ]
+    },
+    {
+      "Name": "Allow tenant-4 to subscribe the Video if people count >= 30 for 5 minutes",
+      "Action": [
+        "stream"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "/smartcity/camera/stream/usa/ohio/store_x/city_surveillance"
+      ],
+      "Condition": {
+        "AnyOf": [
+          {
+            "object": "people_count",
+            "location": "store_x",
+            "max_5mins": {
+              "gt": 30
+            }
+          }
+        ],
+        "All": [
+          {
+            "object": "data_amount",
+            "protocol": "mqtt",
+            "lasthour_mb": {
+              "lt": 3000
+            }
+          },
+          {
+            "object": "data_amount",
+            "protocol": "mqtt",
+            "last24hour_mb": {
+              "lt": 30000
+            }
+          }
+        ]
+      }
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "60eca969e8b037173c7abb9e"
+  },
+  "tenant_name": "context_sensing",
+  "policies": [
+    {
+      "Name": "Context Sensing can read everything",
+      "Effect": "Allow",
+      "Action": [
+        "subscribe"
+      ],
+      "Resource": [
+        "/*/*/*/*"
+      ]
+    },
+    {
+      "Name": "Context Sensing can read everything",
+      "Effect": "Allow",
+      "Action": [
+        "subscribe"
+      ],
+      "Resource": [
+        "/*/*/*/*/*/*/*"
+      ]
+    },
+    {
+      "Name": "Context Sensing can publish everything",
+      "Effect": "Allow",
+      "Action": [
+        "publish"
+      ],
+      "Resource": [
+        "/*/*/*/*"
+      ]
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "60ecbce9e8b037173c7abba0"
+  },
+  "tenant_name": "mqtt_system",
+  "policies": [
+    {
+      "Name": "MQTT System can produce metrics about data amount",
+      "Effect": "Allow",
+      "Action": [
+        "publish"
+      ],
+      "Resource": [
+        "/hub/data_amount/mqtt/*"
+      ]
+    }
+  ]
+}]

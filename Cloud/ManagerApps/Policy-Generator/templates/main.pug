@@ -1,0 +1,15 @@
+|package app.iot
+|
+|default allow = false
+|default whitelist = false
+|default blacklist = false
+|
+|allow{
+|  whitelist
+|  not blacklist
+|}
+|
+
+each policy in policies
+    include _policy.pug
+

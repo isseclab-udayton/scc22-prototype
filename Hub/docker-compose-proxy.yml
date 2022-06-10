@@ -1,0 +1,21 @@
+version: "3.5"
+services:
+
+  mqtt_proxy:
+    build:
+      context: ./MQTT-Proxy
+    environment:
+      OPA_HOST: "http://opa:8181"
+      AUTHENTICATION_HOST: ${AUTHENTICATION_HOST}
+      
+    expose:
+      - "1883"
+      - "8888"
+
+    ports:
+      - "1883:1883"
+      - "8888:8888"
+    networks:
+      - default
+
+  

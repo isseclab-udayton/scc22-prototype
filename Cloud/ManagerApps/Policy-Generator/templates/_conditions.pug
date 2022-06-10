@@ -1,0 +1,6 @@
+each condition , idx in policy.Condition
+    if idx == "AnyOf"
+        include __any_of.pug
+
+    else
+        include __all_of.pug

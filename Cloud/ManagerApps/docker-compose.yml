@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  api:
+    build:
+      context: ./Api    
+    restart: always
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URL: ${MONGO_URL}
+      MONGO_DBNAME: ${MONGO_DBNAME}
+    networks:
+      - default
+
+
+  policy-generator:    
+    build: ./Policy-Generator    
+    environment:
+      BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
+      MONGO_URL: ${MONGO_URL}
+      MONGO_DBNAME: ${MONGO_DBNAME}
+  
+
+  context-interpretation-worker:    
+    build: ./Context-Interpretation-Worker
+    environment:
+      BOOTSTRAP_KAFKA_HOST: ${BOOTSTRAP_KAFKA_HOST}
+      MONGO_URL: ${MONGO_URL}
+      MONGO_DBNAME: ${MONGO_DBNAME}

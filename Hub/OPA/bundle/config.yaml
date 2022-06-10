@@ -1,0 +1,11 @@
+bundles:
+  authz:
+    service: acmecorp
+    resource: bundles/http/example/authz.tar.gz
+    persist: true
+    polling:
+      min_delay_seconds: 60
+      max_delay_seconds: 120
+    signing:
+      keyid: global_key
+      scope: write
