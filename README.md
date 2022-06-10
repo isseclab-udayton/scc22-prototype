@@ -1,4 +1,4 @@
-# PROTOTYPE FOR PAPER "Context-driven Policies Enforcement for Edge-based IoT Data Sharing-as-a-Service" 
+# PROTOTYPE FOR SCC22 PAPER "Context-driven Policies Enforcement for Edge-based IoT Data Sharing-as-a-Service" 
 ## Introduction
 This Github repository includes the code and infrastructure set up for the IoT Datahub. 
 This project has been implemented by Huu Ha Nguyen with the instruction and supervisor from Professor  Hong-Linh Truong,  Professor Phu. Phung, Dr. Phu Nguyen. 
